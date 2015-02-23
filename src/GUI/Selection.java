@@ -5,7 +5,7 @@
  */
 package GUI;
 
-import importstrava.ImportStrava;
+import convertCSV.ConvertCSV;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,14 +16,14 @@ import java.util.logging.Logger;
  */
 public class Selection extends javax.swing.JFrame {
 
-    ImportStrava import_;
+    ConvertCSV import_;
 
     /**
      * Creates new form Selection
      */
     public Selection() {
         initComponents();
-        import_ = new ImportStrava();
+        import_ = new ConvertCSV();
     }
 
     /**

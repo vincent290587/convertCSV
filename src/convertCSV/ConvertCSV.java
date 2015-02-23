@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package importstrava;
+package convertCSV;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVRecord;
  *
  * @author vincent
  */
-public class ImportStrava {
+public class ConvertCSV {
 
     /**
      * @param fichier_
@@ -30,57 +30,58 @@ public class ImportStrava {
     public void importer(String fichier_) throws IOException {
         // TODO code application logic here
 
-        float lat, lon, ele;
-        long secjour;
+        float lat, lon, ele, secjour;
+        int bpm;
         List<MonPoint> points = new ArrayList<>();
         Reader in = null;
         CSVParser parser;
         List<CSVRecord> list;
         GPXWriter monGPX = new GPXWriter();
-        
+
         // lecture du CSV
         try {
-            
-            System.out.println("Lecture de "+fichier_);
+
+            System.out.println("Lecture de " + fichier_);
             in = new FileReader(fichier_);
-            //reader.read(null);
-                    
+
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ImportStrava.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConvertCSV.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         parser = new CSVParser(in, CSVFormat.EXCEL);
-        //parser.parse(new File("/home/vincent/in.gpx"), Charset.forName("UTF-8"), CSVFormat.EXCEL);
         list = parser.getRecords();
         list.remove(0);
 
-        lat = lon = ele = (float) 0.;
-        secjour = 0;
         // remplissage de la liste de point GPX
-        if (list!=null) {
+        if (in != null) {
             for (CSVRecord elem : list) {
 
                 try {
+
+                    // on recupere les donnees dans le CSV
                     lat = Float.parseFloat(elem.get(0));
                     lon = Float.parseFloat(elem.get(1));
                     ele = Float.parseFloat(elem.get(2));
-                    //secjour = Long.parseLong(elem.get(3));
-                    secjour = elem.getRecordNumber();
+                    secjour = Float.parseFloat(elem.get(3));
+                    if (elem.size() > 4) {
+                        bpm = Integer.parseInt(elem.get(4));
+                        points.add(new MonPoint(lat, lon, ele, secjour, bpm));
+                    } else {
+                        points.add(new MonPoint(lat, lon, ele, secjour));
+                    }
+
                 } catch (NumberFormatException ex) {
                     System.out.println(elem.toString());
-                    //monGPX.writePath("C:\\Users\\vincent\\Desktop\\today.gpx", "stravaminator", points);
-                    //in.close();
-                    //System.exit(1);
                 }
-                
-                points.add(new MonPoint(lat, lon, ele, secjour));
 
             }
+
+            // ecriture du GPX
+            monGPX.writePath("C:\\Users\\vincent\\Desktop\\today.gpx", "Training", points);
+            in.close();
+
         }
-        
-        // ecriture du GPX
-        monGPX.writePath("C:\\Users\\vincent\\Desktop\\today.gpx", "stravaminator", points);
-        in.close();
+
         System.exit(0);
     }
 
