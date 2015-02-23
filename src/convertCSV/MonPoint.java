@@ -55,24 +55,25 @@ class MonPoint {
     float getTime() {
         return secjour_;
     }
-    
+
     public String getFormattedTime() {
-        
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT"));
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         calendar.set(HOUR_OF_DAY, 0);
         calendar.set(MINUTE, 0);
         calendar.set(SECOND, 0);
         calendar.set(MILLISECOND, 0);
         long millis_a0 = calendar.getTimeInMillis();
-        
+
         long tempsPoint = (long) this.getTime();
-        String retour_ = df.format(new Date(tempsPoint * 1000 + millis_a0));
+        String retour_ = df.format(new Date(tempsPoint * 1000 + millis_a0)) + "Z";
 
         return retour_;
     }
 
+    @Override
     public String toString() {
 
         String retour_ = "<trkpt lat=\"" + this.getLatitude() + "\" lon=\"" + this.getLongitude() + "\">\n";
@@ -86,7 +87,7 @@ class MonPoint {
                     + "</gpxtpx:TrackPointExtension>\n"
                     + "</extensions>\n";
         }
-        
+
         retour_ += "</trkpt>\n";
 
         return retour_;
